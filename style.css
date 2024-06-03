@@ -1,0 +1,24 @@
+.main{
+    display: flex;
+    justify-content: center;
+}
+
+.main_heading{
+    
+    font-family: monospace;
+    font-weight: 400;
+}
+
+.main_button{
+    padding: 15px;
+    
+    border-radius: 0.4rem;
+    background-color: palevioletred;
+    font-family: monospace;
+    font-weight: 700;
+    cursor: pointer;
+
+
+
+}
+
