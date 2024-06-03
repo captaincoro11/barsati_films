@@ -65,7 +65,7 @@ app.get('/run-selenium-script', async (req, res) => {
 
 // Serve the HTML file
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.send("Hi tehre");
 });
 
 const PORT = process.env.PORT || 3000;
