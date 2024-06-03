@@ -2,9 +2,12 @@ const express = require('express');
 const { Builder, By, Browser, until } = require('selenium-webdriver');
 const Trend = require('./model');
 const { connectDb } = require('./db');
+const cors = require('cors')
 
 const app = express();
 
+
+app.use(cors({}));
 // Function to generate a random IP address
 function generateRandomIP() {
     const octet1 = Math.floor(Math.random() * 256);
