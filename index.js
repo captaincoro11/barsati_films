@@ -62,7 +62,7 @@ app.get('/run-selenium-script', async (req, res) => {
         res.json({ message: 'Selenium script executed successfully!',topics,ip});
     } catch (error) {
         console.error('Error executing Selenium script:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: error.message });
     }
 });
 
