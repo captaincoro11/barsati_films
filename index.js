@@ -2,7 +2,11 @@ const express = require('express');
 const { Builder, By, Browser, until } = require('selenium-webdriver');
 const Trend = require('./model');
 const { connectDb } = require('./db');
-const cors = require('cors')
+const cors = require('cors');
+const path =require('path');
+const dotenv = require('dotenv');
+
+dotenv.config({})
 
 const app = express();
 
@@ -20,11 +24,11 @@ function generateRandomIP() {
 // Endpoint to run the Selenium script
 app.get('/run-selenium-script', async (req, res) => {
     try {
-        connectDb(); // Connect to the MongoDB database
-        const ip = generateRandomIP(); // Generate a random IP address
+        connectDb(); 
+        const ip = generateRandomIP(); 
         const driver = await new Builder().forBrowser(Browser.CHROME).build();
-        await driver.get('https://twitter.com/login'); // Navigate to Twitter login page
-        // Add your Selenium script logic here
+        await driver.get('https://twitter.com/login'); 
+        
         let usernameInput = await driver.wait(until.elementLocated(By.xpath('//input[@name="text"]')), 10000);
 
         await usernameInput.sendKeys('captaincoro44');
@@ -36,16 +40,16 @@ app.get('/run-selenium-script', async (req, res) => {
         await password.sendKeys('fugacity55$');
 
         await driver.findElement(By.xpath('//span[contains(text(),"Log in")]')).click();
-        // ... continue with the rest of your Selenium script ...
-        // Once you have fetched the trending topics array, store it in the database
+        
         const trendingNowElements = await driver.wait(
-            until.elementsLocated(By.xpath('//div[@aria-label="Timeline: Trending now"]//span[contains(@class, "css-1jxf684")]')),
+            until.elementsLocated(By.xpath('//div[@aria-label="Timeline: Trending now"]//div[contains(@class, "r-b88u0q")]//span[contains(@class,"css-1jxf684")]')),
             10000
         );
         const topics = [];
-        for (let i = 2; i < Math.min(trendingNowElements.length, 15); i += 3) {
+        for (let i = 1; i < Math.min(trendingNowElements.length, 5); i ++) {
             let itemText = await trendingNowElements[i].getText();
             topics.push(itemText);
+            console.log(itemText)
         }
         const newTrend =await Trend.create({
             ipAddress:ip,
@@ -55,9 +59,8 @@ app.get('/run-selenium-script', async (req, res) => {
         const newip=newTrend.ipAddress;
         
 
-         // Save the trending topics and IP address to the database
         console.log("Data saved successfully in the database");
-        // Close the browser after the script execution
+        
         await driver.quit();
         res.json({ message: 'Selenium script executed successfully!',topics,ip});
     } catch (error) {
@@ -66,12 +69,13 @@ app.get('/run-selenium-script', async (req, res) => {
     }
 });
 
-// Serve the HTML file
+
 app.get('/', (req, res) => {
-    res.send("Hi tehre");
+    res.sendFile(path.join(__dirname,"public", 'index.html'));
 });
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT} \n You can go to http://localhost:${PORT}  to access the script`);
 });
